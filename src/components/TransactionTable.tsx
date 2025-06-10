@@ -61,39 +61,40 @@ export function TransactionTable() {
       tx.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Agrupa as transações por mês/ano
-  const groupTransactions = (data: Transaction[]) => {
-    const groupedData: GroupedTransactions = {};
-    data.forEach((tx) => {
-      const key = formatMonthYear(tx.date);
-      if (!groupedData[key]) {
-        groupedData[key] = {
-          monthYear: key,
-          transactions: [],
-          totalCredit: 0,
-          totalDebit: 0,
-          balance: 0,
-        };
-      }
-      groupedData[key].transactions.push(tx);
-      if (tx.type === "credit") {
-        groupedData[key].totalCredit += Number(tx.amount);
-      } else {
-        groupedData[key].totalDebit += Number(tx.amount);
-      }
-      groupedData[key].balance =
-        groupedData[key].totalCredit - groupedData[key].totalDebit;
-    });
-    return groupedData;
-  };
-
   // Atualiza agrupamento com base na página atual
-  const updateGroupedByPage = (page: number, data: Transaction[]) => {
-    const start = (page - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    const pageData = data.slice(start, end);
-    setGrouped(groupTransactions(pageData));
-  };
+  const updateGroupedByPage = useCallback(
+    (page: number, data: Transaction[]) => {
+      const start = (page - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const pageData = data.slice(start, end);
+
+      // Move groupTransactions inside to avoid circular dependency
+      const groupedData: GroupedTransactions = {};
+      pageData.forEach((tx) => {
+        const key = formatMonthYear(tx.date);
+        if (!groupedData[key]) {
+          groupedData[key] = {
+            monthYear: key,
+            transactions: [],
+            totalCredit: 0,
+            totalDebit: 0,
+            balance: 0,
+          };
+        }
+        groupedData[key].transactions.push(tx);
+        if (tx.type === "credit") {
+          groupedData[key].totalCredit += Number(tx.amount);
+        } else {
+          groupedData[key].totalDebit += Number(tx.amount);
+        }
+        groupedData[key].balance =
+          groupedData[key].totalCredit - groupedData[key].totalDebit;
+      });
+
+      setGrouped(groupedData);
+    },
+    []
+  );
 
   // Buscar todas transações
   const fetchTransactions = useCallback(() => {
@@ -114,7 +115,7 @@ export function TransactionTable() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [updateGroupedByPage]);
 
   useEffect(() => {
     fetchTransactions();
@@ -123,7 +124,7 @@ export function TransactionTable() {
   // Quando a página ou busca mudar, atualiza o agrupamento
   useEffect(() => {
     updateGroupedByPage(currentPage, filteredTransactions);
-  }, [currentPage, filteredTransactions]);
+  }, [currentPage, filteredTransactions, updateGroupedByPage]);
 
   // Confirma exclusão e atualiza os dados localmente
   const confirmDelete = () => {
