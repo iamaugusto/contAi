@@ -1,43 +1,30 @@
-Sistema Contábil ContAl
-Aplicação fullstack para gestão de lançamentos contábeis, desenvolvida com:
+📊 Sistema Contábil ContAl
+Aplicação para gestão de lançamentos financeiros (Frontend: React + Backend: Express + PostgreSQL).
 
-Frontend: React + TypeScript
+🚀 Como Executar
+Banco de Dados (Docker):
 
-Backend: Express + TypeORM
+bash
+docker-compose up -d
+Backend:
 
-Banco de Dados: PostgreSQL
+bash
+cd backend && npm install && npm run dev
+Frontend:
 
-✨ Funcionalidades
-✔ Cadastro de Lançamentos
+bash
+cd frontend && npm install && npm run dev
 
-Adicionar, editar, visualizar e excluir transações financeiras.
+✅ Funcionalidades
+Cadastro de lançamentos (data, descrição, valor, tipo).
 
-Campos obrigatórios: Data, Descrição, Valor, Tipo (Crédito/Débito).
+Tabela organizada por mês com totais de crédito/débito.
 
-✔ Tabela de Resumo Mensal
-
-Lançamentos agrupados por mês/ano.
-
-Exibe totais de créditos e débitos por mês.
-
-✔ Validações
-
-Formato de data (DD/MM/AAAA).
-
-Apenas valores positivos.
-
-Campos obrigatórios.
-
-✔ Suporte a Docker
-
-Banco de dados PostgreSQL configurado via Docker.
+Validações: data (DD/MM/AAAA), valor positivo.
 
 🛠 Tecnologias
-Frontend: React, TypeScript, Vite
+Frontend: React, TypeScript
 
-Backend: Express, TypeScript, TypeORM
+Backend: Express, TypeORM
 
-Banco de Dados: PostgreSQL
-
-Infraestrutura: Docker
-
+Banco de Dados: PostgreSQL (Docker)
